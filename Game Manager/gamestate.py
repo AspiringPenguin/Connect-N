@@ -41,9 +41,9 @@ class Board:
         self.toMove *= -1
         
         #Undo the last move
-        self.board[self.heights[move]][move] = 0
-        self.heights[move] -= 1
         self.full[move] = False
+        self.heights[move] -= 1
+        self.board[self.heights[move]][move] = 0
 
     def getMoves(self) -> list[int]:
         return [column for column in range(self.width) if not self.full[column]]
