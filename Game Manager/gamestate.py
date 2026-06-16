@@ -48,6 +48,9 @@ class Board:
     def getMoves(self) -> list[int]:
         return [column for column in range(self.width) if not self.full[column]]
 
+    def moveIsLegal(self, move: int) -> bool:
+        return not self.full[move]
+
     def __str__(self) -> str:
         rows = map(lambda x: "".join(map(getAsChar, x)), self.board[::-1])
         return "\n".join(rows)
