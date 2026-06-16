@@ -1,3 +1,10 @@
+def getAsChar(i : int) -> str:
+    if i == 0:
+        return "."
+    elif i == 1:
+        return "x"
+    return "o"
+
 class Board:
     def __init__(self, height : int=6, width : int=7, aim : int=4):
         #Store setup
@@ -20,6 +27,7 @@ class Board:
         self.toMove = 1 # Red
 
     def makeMove(self, move : int): #Integer of the column to play in
+        #Apply the move
         self.board[self.heights[move]][move] = self.toMove
         self.heights[move] += 1
         if self.heights[move] == self.height:
@@ -29,8 +37,10 @@ class Board:
         self.toMove *= -1
 
     def undoMove(self, move : int):
+        #Undo preparations for the next move
         self.toMove *= -1
         
+        #Undo the last move
         self.board[self.heights[move]][move] = 0
         self.heights[move] -= 1
         self.full[move] = False
@@ -38,5 +48,6 @@ class Board:
     def getMoves(self) -> list[int]:
         return [column for column in range(self.width) if not self.full[column]]
 
-    def getMoves(self):
-        pass
+    def __str__(self) -> str:
+        rows = map(lambda x: "".join(map(getAsChar, x)), self.board[::-1])
+        return "\n".join(rows)
