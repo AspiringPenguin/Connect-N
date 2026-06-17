@@ -25,6 +25,7 @@ class MainWindow(Tk):
         #Set up event handling
         self.mouseX = -1
         self.mouseY = -1
+        self.userCanMove = True
         self.setupEventBindings()
 
     def setupCanvas(self):
@@ -64,7 +65,7 @@ class MainWindow(Tk):
 
     def mouseClick(self, e: Event):
         columnSelected = (e.x)//100
-        if self.board.moveIsLegal(columnSelected):
+        if self.board.moveIsLegal(columnSelected) and self.userCanMove:
             self.board.makeMove(columnSelected)
         self.updateBoard()
 
