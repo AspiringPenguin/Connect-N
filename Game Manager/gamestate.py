@@ -1,3 +1,5 @@
+ray = list[tuple[int, int]]
+
 def getAsChar(i : int) -> str:
     if i == 0:
         return "."
@@ -23,8 +25,34 @@ class Board:
         self.full = [False] * width
         self.heights = [0] * width
 
+        self.rays = self.generateRays()
+
         #Game state
         self.toMove = 1 # Red
+
+    def generateRays(self) -> list[list[list[ray]]]:
+        rayLookup = list[list[list[ray]]]()
+
+        rayLen = self.aim - 1
+
+        for y in range(self.height):
+            rayLookup.append([])
+            for x in range(self.width):
+                rays = list[ray]()
+
+                for direction in [(1, 0), (1, 1), (0, 1), (-1, 1), (-1, 0), (-1, -1), (0, -1), (1, -1)]:
+                    #Check for ability to cast a ray in that direction
+                    if 0 <= (y + direction[1]*rayLen) < self.height:
+                        if 0 <= (x + direction[0]*rayLen) < self.width:
+                            thisRay = ray()
+                            for i in range(self.aim):
+                                thisRay.append((x + direction[0]*i, y + direction[1]*i))
+                            rays.append(thisRay)
+
+                rayLookup[y].append(rays)
+
+        return rayLookup
+
 
     def makeMove(self, move : int): #Integer of the column to play in
         #Apply the move
@@ -50,6 +78,12 @@ class Board:
 
     def moveIsLegal(self, move: int) -> bool:
         return not self.full[move]
+
+    def isWon(self) -> int: #0 for no, 1 for red, -1 for yellow
+        return 0
+
+    def isDraw(self) -> bool: #Given that no-one has won, check for a draw
+        return all(self.full)
 
     def __str__(self) -> str:
         rows = map(lambda x: "".join(map(getAsChar, x)), self.board[::-1])
