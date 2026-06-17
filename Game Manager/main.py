@@ -1,4 +1,10 @@
+#from time import perf_counter_ns
+from math import floor
 from tkinter import Event, Tk, Canvas
+
+#import cProfile
+
+from gamestate import Board
 
 class MainWindow(Tk):
     def __init__(self):
@@ -50,5 +56,27 @@ def main():
 
     win.mainloop()
 
+# def perft(board : Board, depth : int) -> int:
+#     if depth == 0 or board.isWon() != 0 or board.isDraw():
+#         return 1
+
+#     total = 0
+#     for move in board.getMoves():
+#         board.makeMove(move)
+#         total += perft(board, depth-1)
+#         board.undoMove(move)
+#     return total
+
 if __name__ == "__main__":
     main()
+
+    # board = Board(width=7, height=6, aim=4)
+    
+    # with cProfile.Profile() as pr:
+    #     for i in range(9):
+    #         start = perf_counter_ns()
+    #         res = perft(board, i)
+    #         end = perf_counter_ns()
+    #         secs = (end - start)/1_000_000_000
+    #         print(i, res, f"{secs}s {res/secs:.0f}nps")
+    #     pr.print_stats(sort="tottime")
