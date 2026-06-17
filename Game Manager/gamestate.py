@@ -30,28 +30,22 @@ class Board:
         #Game state
         self.toMove = 1 # Red
 
-    def generateRays(self) -> list[list[list[ray]]]:
-        rayLookup = list[list[list[ray]]]()
+    def generateRays(self) -> list[ray]:
+        rays = list[ray]()
 
         rayLen = self.aim - 1
 
-        for y in range(self.height):
-            rayLookup.append([])
-            for x in range(self.width):
-                rays = list[ray]()
-
-                for direction in [(1, 0), (1, 1), (0, 1), (-1, 1), (-1, 0), (-1, -1), (0, -1), (1, -1)]:
-                    #Check for ability to cast a ray in that direction
+        for direction in [(1, 0), (1, 1), (0, 1), (-1, 1)]:
+            for y in range(self.height):
+                for x in range(self.width):
                     if 0 <= (y + direction[1]*rayLen) < self.height:
                         if 0 <= (x + direction[0]*rayLen) < self.width:
                             thisRay = ray()
-                            for i in range(1, self.aim): #Start at 1 as we are checking for equality from ray source
+                            for i in range(0, self.aim):
                                 thisRay.append((x + direction[0]*i, y + direction[1]*i))
                             rays.append(thisRay)
 
-                rayLookup[y].append(rays)
-
-        return rayLookup
+        return rays
 
 
     def makeMove(self, move : int): #Integer of the column to play in
@@ -80,21 +74,17 @@ class Board:
         return not self.full[move]
 
     def isWon(self) -> int: #0 for no, 1 for red, -1 for yellow
-        for y in range(self.height):
-            for x in range(self.width):
-                piece = self.board[y][x]
-                if piece == 0:
-                    continue
-
-                for ray in self.rays[y][x]:
-                    broken = False
-                    for (x2, y2) in ray:
-                        if self.board[y2][x2] != piece:
-                            broken = True
-                            break
-
-                    if not broken:
-                        return piece
+        for ray in self.rays:
+            broken = False
+            piece = self.board[ray[0][1]][ray[0][0]]
+            if piece == 0:
+                continue
+            for (x2, y2) in ray[1:]:
+                if self.board[y2][x2] != piece:
+                    broken = True
+                    break
+            if not broken:
+                return piece
         
         return 0
 
