@@ -1,6 +1,5 @@
 #from time import perf_counter_ns
 from math import floor
-from random import choice
 from tkinter import Event, Tk, Canvas
 
 #import cProfile
@@ -63,8 +62,10 @@ class MainWindow(Tk):
         self.mouseY = -1
         self.updateBoard()
 
-    def mouseClick(self, e:Event):
-        self.board.makeMove(choice(self.board.getMoves()))
+    def mouseClick(self, e: Event):
+        columnSelected = (e.x)//100
+        if self.board.moveIsLegal(columnSelected):
+            self.board.makeMove(columnSelected)
         self.updateBoard()
 
     #Highlight a column if needed based on mouse pos and set colors based on gamestate
