@@ -1,7 +1,7 @@
 #from time import perf_counter_ns
 from math import floor
-from tkinter import Event, Frame, Tk, Canvas
-from tkinter.ttk import Button, Style
+from tkinter import Event, Frame, StringVar, Tk, Canvas
+from tkinter.ttk import Button, OptionMenu, Style
 
 #import cProfile
 
@@ -37,14 +37,17 @@ class MainWindow(Tk):
         self.controlFrame = Frame(self)
         self.controlFrame.pack(anchor="s", fill="x")
 
-        self.button1 = Button(self.controlFrame, text="Hello1", style="LargeText.TButton")
-        self.button1.grid(column=1, row=1, padx=5, pady=5)
+        options = ["Human", "Bot 1", "Configure new..."]
+        self.player1DropdownVal = StringVar(value="Human")
+        self.player1Dropdown = OptionMenu(self.controlFrame, self.player1DropdownVal, "Human", *options)
+        self.player1Dropdown.grid(column=1, row=2, padx=5, pady=5)
 
         self.goButton = Button(self.controlFrame, text="Go", style="LargeText.TButton")
-        self.goButton.grid(column=3, row=1, padx=5, pady=5)
+        self.goButton.grid(column=3, row=1, padx=5, pady=5, rowspan=2)
 
-        self.button3 = Button(self.controlFrame, text="Hello3", style="LargeText.TButton")
-        self.button3.grid(column=5, row=1, padx=5, pady=5)
+        self.player2DropdownVal = StringVar(value="Human")
+        self.player2Dropdown = OptionMenu(self.controlFrame, self.player1DropdownVal, "Human", *options)
+        self.player2Dropdown.grid(column=5, row=2, padx=5, pady=5)
 
         self.controlFrame.columnconfigure(0, weight=2)
         self.controlFrame.columnconfigure(1, weight=1)
