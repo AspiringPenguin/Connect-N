@@ -1,5 +1,6 @@
 #from time import perf_counter_ns
 from math import floor
+from random import choice
 from tkinter import Event, Tk, Canvas
 
 #import cProfile
@@ -7,16 +8,24 @@ from tkinter import Event, Tk, Canvas
 from gamestate import Board
 
 class MainWindow(Tk):
-    def __init__(self):
+    def __init__(self, width:int=7, height:int=6, aim:int=4):
         #Set up window title and geometry
         super().__init__()
         self.title("Game Manager")
-        self.minsize(700, 600)
+        self.geometry(f"{width*100}x{height*100}")
+
+        #Gamestate
+        self.board = Board(width=width, height=height, aim=aim)
+        self.boardWidth = width
+        self.boardHeight = height
+        self.aim = aim
 
         #Add canvas for graphics
         self.setupCanvas()
 
         #Set up event handling
+        self.mouseX = -1
+        self.mouseY = -1
         self.setupEventBindings()
 
     def setupCanvas(self):
@@ -24,32 +33,57 @@ class MainWindow(Tk):
 
         self.canvas = Canvas(self, background="blue")
         self.canvas.pack(expand=True, fill="both")
-        for y in range(6):
+        for y in range(self.boardHeight):
             self.slots.append([])
-            for x in range(7):
-                self.slots[y].append(self.canvas.create_oval((15 + x*100, 15 + y*100), (85 + x*100, 85 + y*100), fill="gray"))
+            for x in range(self.boardWidth):
+                self.slots[y].append(self.canvas.create_oval((0, 0), (0, 0), fill="gray"))
 
     def setupEventBindings(self):
         self.canvas.bind("<Button-1>", self.mouseClick)
         self.canvas.bind("<Motion>", self.mouseMove)
-        self.canvas.bind("<Leave>", self.clearHighlight)
+        self.canvas.bind("<Leave>", self.mouseLeave)
+        self.canvas.bind("<Configure>", self.configureBoardView)
+
+    def configureBoardView(self, e : Event):
+        height, width = self.winfo_height(), self.winfo_width()
+
+        cellSize = min(height/self.boardHeight, width/self.boardWidth)
+
+        for y in range(self.boardHeight):
+            for x in range(self.boardWidth):
+                self.canvas.coords(self.slots[y][x], floor(cellSize * (0.1 + x)), floor(cellSize * (0.1 + y)), floor(cellSize * (0.9 + x)), floor(cellSize * (0.9 + y)))
 
     def mouseMove(self, e : Event):
-        self.highlightColumn(e.x // 100)
+        self.mouseX = e.x
+        self.mouseY = e.y
+        self.updateBoard()
 
-    def clearHighlight(self, e:Event):
-        self.highlightColumn(-1)
-
-    def highlightColumn(self, column: int):
-        for y in range(6):
-            for x in range(7):
-                if x == column:
-                    pass
-                else:
-                    pass
+    def mouseLeave(self, e: Event):
+        self.mouseX = -1
+        self.mouseY = -1
+        self.updateBoard()
 
     def mouseClick(self, e:Event):
-        pass
+        self.board.makeMove(choice(self.board.getMoves()))
+        self.updateBoard()
+
+    #Highlight a column if needed based on mouse pos and set colors based on gamestate
+    def updateBoard(self):
+        highlightColumn = self.mouseX // 100
+
+        for y in range(self.boardHeight):
+            for x in range(self.boardWidth):
+                #Determine fill color
+                color = "gray"
+                status = self.board.board[(self.boardHeight-1) - y][x]
+                if status == 1:
+                    color = "red"
+                elif status == -1:
+                    color = "yellow"
+                elif x == highlightColumn:
+                    color = "white"
+
+                self.canvas.itemconfigure(self.slots[y][x], fill=color)
 
 def main():
     win = MainWindow()
