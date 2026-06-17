@@ -45,7 +45,7 @@ class Board:
                     if 0 <= (y + direction[1]*rayLen) < self.height:
                         if 0 <= (x + direction[0]*rayLen) < self.width:
                             thisRay = ray()
-                            for i in range(self.aim):
+                            for i in range(1, self.aim): #Start at 1 as we are checking for equality from ray source
                                 thisRay.append((x + direction[0]*i, y + direction[1]*i))
                             rays.append(thisRay)
 
@@ -80,6 +80,22 @@ class Board:
         return not self.full[move]
 
     def isWon(self) -> int: #0 for no, 1 for red, -1 for yellow
+        for y in range(self.height):
+            for x in range(self.width):
+                piece = self.board[y][x]
+                if piece == 0:
+                    continue
+
+                for ray in self.rays[y][x]:
+                    broken = False
+                    for (x2, y2) in ray:
+                        if self.board[y2][x2] != piece:
+                            broken = True
+                            break
+
+                    if not broken:
+                        return piece
+        
         return 0
 
     def isDraw(self) -> bool: #Given that no-one has won, check for a draw
