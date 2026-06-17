@@ -1,6 +1,7 @@
 #from time import perf_counter_ns
 from math import floor
-from tkinter import Event, Tk, Canvas
+from tkinter import Event, Frame, Tk, Canvas
+from tkinter.ttk import Button, Style
 
 #import cProfile
 
@@ -11,7 +12,7 @@ class MainWindow(Tk):
         #Set up window title and geometry
         super().__init__()
         self.title("Game Manager")
-        self.geometry(f"{width*100}x{height*100}")
+        self.geometry(f"{700}x{600}")
 
         #Gamestate
         self.board = Board(width=width, height=height, aim=aim)
@@ -25,14 +26,39 @@ class MainWindow(Tk):
         #Set up event handling
         self.mouseX = -1
         self.mouseY = -1
+        self.cellSize = 0
         self.userCanMove = True
         self.setupEventBindings()
+
+        #Other UI elements
+        self.ttkStyle = Style()
+        self.ttkStyle.configure("LargeText.TButton", font="TkDefaultFont 12")
+
+        self.controlFrame = Frame(self)
+        self.controlFrame.pack(anchor="s", fill="x")
+
+        self.button1 = Button(self.controlFrame, text="Hello1", style="LargeText.TButton")
+        self.button1.grid(column=1, row=1, padx=5, pady=5)
+
+        self.goButton = Button(self.controlFrame, text="Go", style="LargeText.TButton")
+        self.goButton.grid(column=3, row=1, padx=5, pady=5)
+
+        self.button3 = Button(self.controlFrame, text="Hello3", style="LargeText.TButton")
+        self.button3.grid(column=5, row=1, padx=5, pady=5)
+
+        self.controlFrame.columnconfigure(0, weight=2)
+        self.controlFrame.columnconfigure(1, weight=1)
+        self.controlFrame.columnconfigure(2, weight=2)
+        self.controlFrame.columnconfigure(3, weight=1)
+        self.controlFrame.columnconfigure(4, weight=2)
+        self.controlFrame.columnconfigure(5, weight=1)
+        self.controlFrame.columnconfigure(6, weight=2)
 
     def setupCanvas(self):
         self.slots = list[list[int]]()
 
         self.canvas = Canvas(self, background="blue")
-        self.canvas.pack(expand=True, fill="both")
+        self.canvas.pack(expand=True, fill="both", anchor="n")
         for y in range(self.boardHeight):
             self.slots.append([])
             for x in range(self.boardWidth):
@@ -45,13 +71,14 @@ class MainWindow(Tk):
         self.canvas.bind("<Configure>", self.configureBoardView)
 
     def configureBoardView(self, e : Event):
-        height, width = self.winfo_height(), self.winfo_width()
+        height, width = self.canvas.winfo_height(), self.canvas.winfo_width()
 
-        cellSize = min(height/self.boardHeight, width/self.boardWidth)
+        self.cellSize = min(height/self.boardHeight, width/self.boardWidth)
 
         for y in range(self.boardHeight):
             for x in range(self.boardWidth):
-                self.canvas.coords(self.slots[y][x], floor(cellSize * (0.1 + x)), floor(cellSize * (0.1 + y)), floor(cellSize * (0.9 + x)), floor(cellSize * (0.9 + y)))
+                self.canvas.coords(self.slots[y][x], floor(self.cellSize * (0.1 + x)), floor(self.cellSize * (0.1 + y)), floor(self.cellSize * (0.9 + x)), floor(self.cellSize * (0.9 + y)))
+
 
     def mouseMove(self, e : Event):
         self.mouseX = e.x
@@ -64,14 +91,14 @@ class MainWindow(Tk):
         self.updateBoard()
 
     def mouseClick(self, e: Event):
-        columnSelected = (e.x)//100
+        columnSelected = floor((e.x) / self.cellSize)
         if self.board.moveIsLegal(columnSelected) and self.userCanMove:
             self.board.makeMove(columnSelected)
         self.updateBoard()
 
     #Highlight a column if needed based on mouse pos and set colors based on gamestate
     def updateBoard(self):
-        highlightColumn = self.mouseX // 100
+        highlightColumn = self.mouseX // self.cellSize
 
         for y in range(self.boardHeight):
             for x in range(self.boardWidth):
@@ -88,7 +115,7 @@ class MainWindow(Tk):
                 self.canvas.itemconfigure(self.slots[y][x], fill=color)
 
 def main():
-    win = MainWindow()
+    win = MainWindow(width=13, height=10, aim=8)
 
     win.mainloop()
 
