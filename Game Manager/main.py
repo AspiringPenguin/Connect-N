@@ -99,6 +99,8 @@ class MainWindow(Tk):
 
     def mouseClick(self, e: Event):
         columnSelected = floor((e.x) / self.cellSize)
+        if columnSelected >= self.boardWidth:
+            return
         if self.board.moveIsLegal(columnSelected) and self.userCanMove:
             self.board.makeMove(columnSelected)
         self.updateBoard()
