@@ -18,7 +18,7 @@ class Board:
         self.board = list[list[int]]() #0=empty,  1=red, -1=yellow
         for y in range(height):
             self.board.append(list[int]())
-            for x in range(width):
+            for _ in range(width):
                 self.board[y].append(0)
 
         #Helper variables
