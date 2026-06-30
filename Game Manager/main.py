@@ -9,6 +9,8 @@ from gamestate import Board
 
 class MainWindow(Tk):
     def __init__(self, width:int=7, height:int=6, aim:int=4):
+
+        self.n = 0
         #Set up window title and geometry
         super().__init__()
         self.title("Game Manager")
@@ -36,22 +38,18 @@ class MainWindow(Tk):
         self.controlFrame = Frame(self)
         self.controlFrame.pack(anchor="s", fill="x")
 
-        options = ["Human", "Bot 1", "Configure new..."]
-        self.player1DropdownVal = StringVar(value="Human")
-        self.player1Dropdown = OptionMenu(self.controlFrame, self.player1DropdownVal, "Human", *options)
-        self.player1Dropdown.grid(column=1, row=2, padx=5, pady=5)
+        
 
         self.goButton = Button(self.controlFrame, text="Go", style="LargeText.TButton", command=self.handleGo)
         self.goButton.grid(column=3, row=1, padx=5, pady=5, rowspan=2, columnspan=2)
 
-        self.player2DropdownVal = StringVar(value="Human")
-        self.player2Dropdown = OptionMenu(self.controlFrame, self.player2DropdownVal, "Human", *options)
-        self.player2Dropdown.grid(column=6, row=2, padx=5, pady=5)
+        
 
         self.gameCountLabel = Label(self.controlFrame, text="Number of Games:")
         self.gameCountLabel.grid(column=3, row=3)
 
         self.gameCountSpinbox = Spinbox(self.controlFrame, state="disabled", width=5, from_=1, to=1000, increment=1)
+        self.gameCountSpinbox.set(1)
         self.gameCountSpinbox.grid(column=4, row=3)
 
         self.controlFrame.columnconfigure(0, weight=2)
@@ -80,8 +78,6 @@ class MainWindow(Tk):
         self.canvas.bind("<Motion>", self.mouseMove)
         self.canvas.bind("<Leave>", self.mouseLeave)
         self.canvas.bind("<Configure>", self.configureBoardView)
-        self.player1DropdownVal.trace_add("write", self.handlePlayerChange)
-        self.player2DropdownVal.trace_add("write", self.handlePlayerChange)
 
     def configureBoardView(self, e : Event):
         height, width = self.canvas.winfo_height(), self.canvas.winfo_width()
@@ -127,12 +123,9 @@ class MainWindow(Tk):
 
                 self.canvas.itemconfigure(self.slots[y][x], fill=color)
     
-    def handlePlayerChange(self, var : str, index : str, mode : str):
-        print(self.player1DropdownVal.get())
-        print(self.player2DropdownVal.get())
-    
     def handleGo(self):
         print("Go!")
+        print(self.gameCountSpinbox.get())
 
 def main():
     win = MainWindow(width=13, height=10, aim=8)
