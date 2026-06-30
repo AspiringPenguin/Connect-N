@@ -116,7 +116,7 @@ class MainWindow(Tk):
                     color = "red"
                 elif status == -1:
                     color = "yellow"
-                elif x == highlightColumn:
+                elif x == highlightColumn and self.userCanMove:
                     color = "white"
 
                 self.canvas.itemconfigure(self.slots[y][x], fill=color)
