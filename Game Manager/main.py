@@ -12,7 +12,7 @@ class MainWindow(Tk):
         #Set up window title and geometry
         super().__init__()
         self.title("Game Manager")
-        self.geometry(f"{700}x{600}")
+        self.geometry(f"{700}x{700}")
 
         #Gamestate
         self.board = Board(width=width, height=height, aim=aim)
@@ -134,7 +134,7 @@ class MainWindow(Tk):
             print(f"Invalid move made: {move}.")
 
 def main():
-    win = MainWindow(width=13, height=10, aim=8)
+    win = MainWindow()
 
     win.mainloop()
 
