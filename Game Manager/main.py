@@ -101,9 +101,8 @@ class MainWindow(Tk):
         columnSelected = floor((e.x) / self.cellSize)
         if columnSelected >= self.boardWidth:
             return
-        if self.board.moveIsLegal(columnSelected) and self.userCanMove:
-            self.board.makeMove(columnSelected)
-        self.updateBoard()
+        if self.userCanMove:
+            self.makeMove(columnSelected)
 
     #Highlight a column if needed based on mouse pos and set colors based on gamestate
     def updateBoard(self):
@@ -126,6 +125,13 @@ class MainWindow(Tk):
     def handleGo(self):
         print("Go!")
         print(self.gameCountSpinbox.get())
+
+    def makeMove(self, move:int):
+        if self.board.moveIsLegal(move):
+            self.board.makeMove(move)
+            self.updateBoard()
+        else:
+            print(f"Invalid move made: {move}.")
 
 def main():
     win = MainWindow(width=13, height=10, aim=8)
