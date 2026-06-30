@@ -1,7 +1,7 @@
 #from time import perf_counter_ns
 from math import floor
 from tkinter import Event, Frame, StringVar, Tk, Canvas
-from tkinter.ttk import Button, OptionMenu, Style
+from tkinter.ttk import Button, OptionMenu, Style, Label, Spinbox
 
 #import cProfile
 
@@ -28,7 +28,6 @@ class MainWindow(Tk):
         self.mouseY = -1
         self.cellSize = 0
         self.userCanMove = True
-        self.setupEventBindings()
 
         #Other UI elements
         self.ttkStyle = Style()
@@ -42,20 +41,29 @@ class MainWindow(Tk):
         self.player1Dropdown = OptionMenu(self.controlFrame, self.player1DropdownVal, "Human", *options)
         self.player1Dropdown.grid(column=1, row=2, padx=5, pady=5)
 
-        self.goButton = Button(self.controlFrame, text="Go", style="LargeText.TButton")
-        self.goButton.grid(column=3, row=1, padx=5, pady=5, rowspan=2)
+        self.goButton = Button(self.controlFrame, text="Go", style="LargeText.TButton", command=self.handleGo)
+        self.goButton.grid(column=3, row=1, padx=5, pady=5, rowspan=2, columnspan=2)
 
         self.player2DropdownVal = StringVar(value="Human")
-        self.player2Dropdown = OptionMenu(self.controlFrame, self.player1DropdownVal, "Human", *options)
-        self.player2Dropdown.grid(column=5, row=2, padx=5, pady=5)
+        self.player2Dropdown = OptionMenu(self.controlFrame, self.player2DropdownVal, "Human", *options)
+        self.player2Dropdown.grid(column=6, row=2, padx=5, pady=5)
+
+        self.gameCountLabel = Label(self.controlFrame, text="Number of Games:")
+        self.gameCountLabel.grid(column=3, row=3)
+
+        self.gameCountSpinbox = Spinbox(self.controlFrame, state="disabled", width=5, from_=1, to=1000, increment=1)
+        self.gameCountSpinbox.grid(column=4, row=3)
 
         self.controlFrame.columnconfigure(0, weight=2)
         self.controlFrame.columnconfigure(1, weight=1)
         self.controlFrame.columnconfigure(2, weight=2)
         self.controlFrame.columnconfigure(3, weight=1)
-        self.controlFrame.columnconfigure(4, weight=2)
-        self.controlFrame.columnconfigure(5, weight=1)
-        self.controlFrame.columnconfigure(6, weight=2)
+        self.controlFrame.columnconfigure(4, weight=1)
+        self.controlFrame.columnconfigure(5, weight=2)
+        self.controlFrame.columnconfigure(6, weight=1)
+        self.controlFrame.columnconfigure(7, weight=2)
+        
+        self.setupEventBindings()
 
     def setupCanvas(self):
         self.slots = list[list[int]]()
@@ -64,7 +72,7 @@ class MainWindow(Tk):
         self.canvas.pack(expand=True, fill="both", anchor="n")
         for y in range(self.boardHeight):
             self.slots.append([])
-            for x in range(self.boardWidth):
+            for _x in range(self.boardWidth):
                 self.slots[y].append(self.canvas.create_oval((0, 0), (0, 0), fill="gray"))
 
     def setupEventBindings(self):
@@ -72,6 +80,8 @@ class MainWindow(Tk):
         self.canvas.bind("<Motion>", self.mouseMove)
         self.canvas.bind("<Leave>", self.mouseLeave)
         self.canvas.bind("<Configure>", self.configureBoardView)
+        self.player1DropdownVal.trace_add("write", self.handlePlayerChange)
+        self.player2DropdownVal.trace_add("write", self.handlePlayerChange)
 
     def configureBoardView(self, e : Event):
         height, width = self.canvas.winfo_height(), self.canvas.winfo_width()
@@ -116,6 +126,13 @@ class MainWindow(Tk):
                     color = "white"
 
                 self.canvas.itemconfigure(self.slots[y][x], fill=color)
+    
+    def handlePlayerChange(self, var : str, index : str, mode : str):
+        print(self.player1DropdownVal.get())
+        print(self.player2DropdownVal.get())
+    
+    def handleGo(self):
+        print("Go!")
 
 def main():
     win = MainWindow(width=13, height=10, aim=8)
