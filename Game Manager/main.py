@@ -1,7 +1,7 @@
 #from time import perf_counter_ns
 from math import floor
-from tkinter import Event, Frame, StringVar, Tk, Canvas
-from tkinter.ttk import Button, OptionMenu, Style, Label, Spinbox
+from tkinter import Event, Frame, Tk, Canvas
+from tkinter.ttk import Button, Style, Label, Spinbox
 
 #import cProfile
 
@@ -9,8 +9,6 @@ from gamestate import Board
 
 class MainWindow(Tk):
     def __init__(self, width:int=7, height:int=6, aim:int=4):
-
-        self.n = 0
         #Set up window title and geometry
         super().__init__()
         self.title("Game Manager")
